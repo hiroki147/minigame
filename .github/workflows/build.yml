@@ -27,9 +27,9 @@ jobs:
           cd ..
           curl -sSfL https://github.com/MaxSignal/buildscripts/releases/download/Linux/devkitPro.tar.gz | tar -zxf -
           cd -
+          DEVKITPRO="$OLDPWD/devkitPro" DEVKITSH4="$DEVKITPRO/devkitSH4" PATH="$DEVKITPRO/tools/bin:$DEVKITSH4/bin:$PATH" make clean
           DEVKITPRO="$OLDPWD/devkitPro" DEVKITSH4="$DEVKITPRO/devkitSH4" PATH="$DEVKITPRO/tools/bin:$DEVKITSH4/bin:$PATH" make
           zip -r build.zip build
-
       - name: Publish
         run: |
           if [ -n "${{ inputs.tag }}" ]; then
