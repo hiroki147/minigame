@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <graphics/drawing.h>
 #include <graphics/color.h>
 #include <graphics/text.h>
