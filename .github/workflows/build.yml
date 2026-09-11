@@ -9,6 +9,9 @@ on:
         type: string
         description: 'Tag Name to be created'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build EX-word addon
