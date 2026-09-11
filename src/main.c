@@ -3,8 +3,6 @@
 #include <graphics/text.h>
 #include <graphics/lcdc.h>
 #include <sh4a/input/keypad.h>
-#include <stdlib.h>
-#include <string.h>
 
 #define SCREEN_WIDTH 528
 #define SCREEN_HEIGHT 320
@@ -31,6 +29,7 @@ int paddle_x;
 Block blocks[BLOCK_ROWS * BLOCK_COLS];
 int score = 0;
 int game_over = 0;
+struct font *fnt = NULL;
 
 void init_game() {
   paddle_x = (SCREEN_WIDTH - PADDLE_WIDTH) / 2;
@@ -40,6 +39,7 @@ void init_game() {
   ball.vy = -3;
   score = 0;
   game_over = 0;
+  fnt = get_font();
   
   for (int i = 0; i < BLOCK_ROWS * BLOCK_COLS; i++) {
     blocks[i].active = 1;
@@ -100,6 +100,27 @@ void update_game() {
   }
 }
 
+void draw_number(int x, int y, int num) {
+  char buffer[16];
+  int len = 0;
+  int n = num;
+  
+  if (n == 0) {
+    render_text(x, y, "0");
+    return;
+  }
+  
+  while (n > 0) {
+    buffer[len++] = '0' + (n % 10);
+    n /= 10;
+  }
+  
+  for (int i = len - 1; i >= 0; i--) {
+    char ch[2] = {buffer[i], 0};
+    render_text(x + (len - 1 - i) * fnt->width, y, ch);
+  }
+}
+
 void draw_game() {
   // Clear screen
   set_pen(create_rgb16(0, 0, 0));
@@ -124,11 +145,9 @@ void draw_game() {
   }
   
   // Draw score
-  struct font *fnt = get_font();
   set_pen(create_rgb16(255, 255, 0));
-  char score_str[32];
-  sprintf(score_str, "Score: %d", score);
-  render_text(10, 10, score_str);
+  render_text(10, 10, "Score:");
+  draw_number(70, 10, score);
   
   lcdc_copy_vram();
 }
@@ -146,17 +165,14 @@ int main(void) {
   }
   
   // Game over screen
-  struct font *fnt = get_font();
   set_pen(create_rgb16(0, 0, 0));
   draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
   set_pen(create_rgb16(255, 0, 0));
   render_text((SCREEN_WIDTH - (sizeof "GAME OVER" - 1) * fnt->width) / 2, 
               SCREEN_HEIGHT / 2 - fnt->height, "GAME OVER");
   set_pen(create_rgb16(255, 255, 255));
-  char final_score[32];
-  sprintf(final_score, "Final Score: %d", score);
-  render_text((SCREEN_WIDTH - (strlen(final_score)) * fnt->width) / 2,
-              SCREEN_HEIGHT / 2 + fnt->height, final_score);
+  render_text(10, SCREEN_HEIGHT / 2 + fnt->height, "Final Score:");
+  draw_number(150, SCREEN_HEIGHT / 2 + fnt->height, score);
   lcdc_copy_vram();
   
   while (1) {
