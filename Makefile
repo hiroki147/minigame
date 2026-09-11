@@ -5,10 +5,10 @@ $(error "Please set DEVKITSH4 in your environment. export DEVKITSH4=<path to sdk
 endif
 include $(DEVKITSH4)/exword_rules
 
-TARGET       := hello
-MODNAME      := helloworld
-APPTITLE     := Hello, world!
-APPID        := HELLO
+TARGET       := blockbreaker
+MODNAME      := blockbreaker
+APPTITLE     := Block Breaker
+APPID        := BREAK
 APPMOD       := $(TARGET).d01
 
 SOURCEDIR    := src
